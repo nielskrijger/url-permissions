@@ -47,7 +47,7 @@ For example;
 https://api.example.com/articles/article-1/comments/comment-1
 ```
 
-Some URL permissions that allow a user to read that resource instance are:
+The following URL permissions allow a user to read that comment:
 
 ```
 /articles:read
@@ -81,6 +81,12 @@ https://newspaper.com/api/articles?author=user-1
 ```
 
 ... which grants access to all CRUD operations on articles written by author `user-1`.
+
+```
+/articles?author={authorId}:read
+```
+
+Grants read access to an author's articles which is specified at runtime.
 
 ```
 /articles?author=user-1&status=published:read
@@ -190,3 +196,9 @@ Alternatively, you might create an additional resource url `/public/logo.png` ac
 Yet another alternative is to add an attribute `public=true|false` to each file record and check programmatically whether a user is granted access or not. To express this in an URL Permission you can use `/files?public=true:read`.
 
 While URL Permissions are flexible, it is likely you will find yourself in a situation where other access control models are easier to implement and maintain.
+
+# Motivation
+
+The need for URL-Based Permissions originated from building a REST API in a [Microservice Architecture](http://www.martinfowler.com/articles/microservices.html). One of the many disadvantages of a microservice architecture is the complexity of an authorization mechanism. In our [OAuth2](https://oauth.net/2/) authentication service we adopted [JWT's](https://jwt.io/introduction/) to transmit authorization grants safely. JWT's are great; [OAuth2 scopes](https://tools.ietf.org/html/rfc6749#section-3.3) however are a bit vague. The OAuth2 RFC does not specify how to format authorization grants (for good reasons).
+
+The URL-Based Permission format was designed to solve this problem for REST API's.
