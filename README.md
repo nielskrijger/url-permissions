@@ -1,6 +1,6 @@
 # URL-Based Permissions
 
-Ever felt the need to concisely describe what a user or group of users is allowed to do on a REST API? This documents describes how to format permissions for users or groups in the following way:
+This document describes how to format permissions for users or groups in the following way:
 
 ```
 <url>?<attributes>:<actions>
@@ -15,13 +15,13 @@ Some examples:
 
 ## Goal
 
-URL Based Permissions are intended for web services that:
+URL-Based Permissions are intended for web services that:
 
 1. have a REST API of [maturity level 1](http://martinfowler.com/articles/richardsonMaturityModel.html) or higher;
 2. require permissions to be expressed in a succinct way;
 3. require resource owners to grant permissions to other users or groups.
 
-## format
+## Format
 
 ```
 <url>?<attributes>:<actions>
@@ -38,13 +38,13 @@ An URL Permission consists of three components:
 URL-Based Permissions are ideal for REST API's. REST URL's are structured as follows:
 
 ```
-https://example.com/collection/:resource_id/sub_collection/:sub_resource2
+https://api.example.com/collection/:resource_id/sub_collection/:sub_resource2
 ```
 
 For example;
 
 ```
-https://example.com/articles/article-1/comments/comment-1
+https://api.example.com/articles/article-1/comments/comment-1
 ```
 
 Some URL permissions that allow a user to read that resource instance are:
@@ -53,7 +53,7 @@ Some URL permissions that allow a user to read that resource instance are:
 /articles:read
 /articles/*:read
 /articles/*/comments/*:read
-https://example.com/articles/article-1/comments/comment-1:read
+https://api.example.com/articles/article-1/comments/comment-1:read
 ```
 
 Note the subtle difference between `/articles:read` and `/articles/*:read`. Strictly speaking the former grants permission to the articles collection allowing you to read and search all articles, while the latter only allows you to read articles but not access the collection directly.
@@ -71,7 +71,7 @@ Replacement variables formatted as `{var}` can be used to apply user-specific at
 Attributes are domain-specific properties that restrict a permission. They are similar to how you'd filter a resource collection, for example:
 
 ```
-https://newspaper.com/articles?author=user-1
+https://newspaper.com/api/articles?author=user-1
 ```
 
 ... returns newspaper articles written by `user-1`. URL Permission attributes are used in the same way:
