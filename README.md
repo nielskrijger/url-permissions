@@ -9,7 +9,7 @@ This document describes how to format permissions for users or groups in the fol
 Some examples:
 
 - `/groups/my-group:read` - grants read access to the group `/groups/my-group`.
-- `/articles?author={userId}:read,update` - grants read and update access to the articles whose author is `user1`.
+- `/articles?author=user-1:read,update` - grants read and update access to the articles whose author is `user-1`.
 - `/**:owner` - grants access to all available actions for all resources, e.g. an administrator.
 - `https://newspaper.com/articles?author=user1:read,update` - grants read and update access to all newspaper articles whose author is `user1`.
 
@@ -56,7 +56,7 @@ https://api.example.com/articles/article-1/comments/comment-1
 https://api.example.com/articles/article-1/comments/comment-1:read
 ```
 
-Note the subtle difference between `/articles:read` and `/articles/*:read`. The former grants permission to the articles collection which allows the user to read and search articles. The latter allows the user to read articles but not to search the articles collection.
+Note the subtle difference between `/articles:read` and `/articles/*:read`. The former grants permission to the articles collection which allows the user to both read and search articles. The latter allows the user only to read articles, not search them.
 
 Replacement variables formatted as `{var}` can be used to apply domain object properties at runtime in the url. For example:
 
@@ -199,7 +199,7 @@ URL-Based Permissions focusses primarily on the representation of a permission, 
 
 As a result when using URL-Based Permissions you may find yourself using other models as well. However, for most REST web services the model should fit well.
 
-### Real example
+#### Example
 
 Imagine storing a file in a cloud service. By default the upload is private and an URL permission granting access to it may look like:
 
