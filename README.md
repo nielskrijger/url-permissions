@@ -15,7 +15,7 @@ Some examples:
 
 ## Goal
 
-URL-Based Permissions are intended for web services that:
+URL-Based Permissions are intended to provide authorization for web services that:
 
 1. have a REST API of [maturity level 1](http://martinfowler.com/articles/richardsonMaturityModel.html) or higher;
 2. require permissions to be expressed in a succinct way;
@@ -47,7 +47,7 @@ For example;
 https://api.example.com/articles/article-1/comments/comment-1
 ```
 
-The following URL permissions allow a user to read that comment:
+... the following URL permissions would allow a user to read that comment:
 
 ```
 /articles:read
@@ -56,15 +56,15 @@ The following URL permissions allow a user to read that comment:
 https://api.example.com/articles/article-1/comments/comment-1:read
 ```
 
-Note the subtle difference between `/articles:read` and `/articles/*:read`. Strictly speaking the former grants permission to the articles collection allowing you to read and search all articles, while the latter only allows you to read articles but not access the collection directly.
+Note the subtle difference between `/articles:read` and `/articles/*:read`. The former grants permission to the articles collection which allows the user to read and search articles. The latter allows the user to read articles but not to search the articles collection.
 
-Replacement variables formatted as `{var}` can be used to apply user-specific attributes in the url. For example:
+Replacement variables formatted as `{var}` can be used to apply domain object properties at runtime in the url. For example:
 
 ```
 /user/{userId}/emails:read
 ```
 
-... which grants read access to a user's emails address. Note the `userId` replacement variable must be defined at runtime when evaluating the permission.
+... which grants read access to a user's emails address. Note the `userId` replacement variable **must** be defined at runtime when evaluating the permission.
 
 ### Attributes
 
@@ -80,25 +80,25 @@ https://newspaper.com/api/articles?author=user-1
 /articles?author=user-1:all
 ```
 
-... which grants access to all CRUD operations on articles written by author `user-1`.
+... which grants access to all CRUD operations on articles written by author `user-1`,
 
 ```
 /articles?author={authorId}:read
 ```
 
-Grants read access to an author's articles which is specified at runtime.
+... grants read access to an author's articles which is specified at runtime,
 
 ```
 /articles?author=user-1&status=published:read
 ```
 
-Grants read access to published articles of `user-1`.
+... grants read access to published articles of `user-1`,
 
 ```
 /articles/*/comments?article.status=published:read
 ```
 
-Grants read access to comments of all published articles (but not read the articles themselves).
+... grants read access to comments of all published articles (but not read the articles themselves).
 
 ### Actions
 
@@ -123,7 +123,25 @@ Name      | Alias for | Description
 `manager` |   `crudm` | Allows user to perform CRUD operations and set permissions of users without `manager` or `owner` permissions.
 `owner`   |   `cruds` | Allows all possible actions on resource.
 
-## Compared to other access control models
+## Domain model design
+
+Where to store, link and/or retrieve permissions depends on your project's context. A variety of domain objects are commonly used for this purpose:
+
+* **User**: models a real person.
+* **Group**: models a group of real persons.
+* **Role**: models a set of privileges.
+* **Account**: models a user or group representation identified by a human-readable identifier such as a username or organization name. Often a *user* and *account* are the same.
+* **Policy**: models documents describing who is allowed to do what in what circumstances.
+* *resource instance*: directly attach permissions to resource instance objects (similar to an ACL).
+
+There is no right or wrong in your design, but here some tips:
+
+* Roles and groups are often used interchangeably; both represent a collection of users with certain permissions. Try not to use both concepts without good reason as this might get confusing.
+* Roles are similar to action aliases (see above). Make a clear distinction between the two or use only one of the two, not both.
+* Accounts might be transferrable from one person to another and should only contain permissions that are automatically transferred with it.
+* Try to avoid directly attaching permissions to resource instance objects and spreading your permissions everywhere. If you feel the need to do consider using URL Permission attributes or switch to ACL's.
+
+## Other access control models
 
 ### Role-Based Access Control (RBAC)
 
@@ -201,4 +219,4 @@ While URL Permissions are flexible, it is likely you will find yourself in a sit
 
 The need for URL-Based Permissions originated from building a REST API in a [Microservice Architecture](http://www.martinfowler.com/articles/microservices.html). One of the many disadvantages of a microservice architecture is the complexity of an authorization mechanism. In our [OAuth2](https://oauth.net/2/) authentication service we adopted [JWT's](https://jwt.io/introduction/) to transmit authorization grants safely. JWT's are great; [OAuth2 scopes](https://tools.ietf.org/html/rfc6749#section-3.3) however are a bit vague. The OAuth2 RFC does not specify how to format authorization grants (for good reasons).
 
-The URL-Based Permission format was designed to solve this problem for REST API's.
+The URL-Based Permission format was designed to solve this problem.
